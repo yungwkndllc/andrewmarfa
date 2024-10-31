@@ -14,56 +14,21 @@ let aBa = [],
   xPercs = [],
   yPercs = [],
   boxBounds = [];
-let g = "green",
-  b = "#000",
-  pP = [g, g, g, g, g, g, g, g, g, b, b, "red", "blue"],
-  puP = ["#FFD6FF", "#E7C6FF", "#C8B6FF", "#B8C0FF", "#BBD0FF"],
-  kP = [
-    "#9e248b",
-    "#144a7b",
-    "#feec35",
-    "#92d3cc",
-    "#1db1ed",
-    "#19a991",
-    "#f6bbd5",
-    "#dada5f",
-    "#bf85ba",
-    "#ea168d",
-    "#303191",
-  ],
-  bwP = ["#fff", b],
-  bP = ["#900025", "#ff8657", "#374f9b", "#060622", "#7a5cee", "#d1b4bf"],
-  gwP = ["#24476a", "#286991", "#ecbf9e", "#ebd7b2"],
-  wlP = ["#748838", "#b6bfcf", "#eeb5a1", "#779d9d"];
-let allPalettes = [pP, puP, kP, bP, gwP, wlP, bwP];
 
-allPalettes = [
-  ["#529e4a", "#4d4f3c", "#fae44c", "#e9723e", "#d93932", "#e56613", "#f5cc17"],
+let allPalettes = [
+  // Vibrant summer
+  ["#FF6B6B", "#4ECDC4", "#FFE66D", "#95E1D3", "#FF8B94", "#45B7D1", "#FFBE0B"],
+  // Electric pop
+  ["#7400B8", "#5390D9", "#48BFE3", "#64DFDF", "#80FFDB", "#6930C3", "#4EA8DE"],
+  // Candy store
+  ["#FF69EB", "#FF86C8", "#FFA3A5", "#FFBF81", "#FFE26E", "#F25C54", "#FF9ECD"],
+  // Forest fresh
+  ["#2D6A4F", "#40916C", "#52B788", "#74C69D", "#95D5B2", "#1B4332", "#81B29A"],
+  // Sunset vibes
+  ["#F72585", "#7209B7", "#3A0CA3", "#4361EE", "#4CC9F0", "#B5179E", "#560BAD"],
 ];
 
-function getRandomSimilarColor(hexColor) {
-  // Convert hex to RGB
-  let r = parseInt(hexColor.slice(1, 3), 16);
-  let g = parseInt(hexColor.slice(3, 5), 16);
-  let b = parseInt(hexColor.slice(5, 7), 16);
-
-  // Adjust saturation and brightness
-  let saturation = Math.random() * 0.2 + 0.8; // Adjust saturation between 0.8 and 1
-  let brightness = Math.random() * 0.2 + 0.8; // Adjust brightness between 0.8 and 1
-
-  // Convert back to hex
-  r = Math.round(Math.min(Math.max(0, r * saturation), 255));
-  g = Math.round(Math.min(Math.max(0, g * saturation), 255));
-  b = Math.round(Math.min(Math.max(0, b * saturation), 255));
-
-  r = Math.round(Math.min(Math.max(0, r * brightness), 255));
-  g = Math.round(Math.min(Math.max(0, g * brightness), 255));
-  b = Math.round(Math.min(Math.max(0, b * brightness), 255));
-
-  return "#" + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
-}
-
-let allPalettesNotBW = allPalettes.filter((p) => p != bwP);
+let allPalettesNotBW = allPalettes;
 let p5g = new P5Grain();
 let num;
 let particles = [];
@@ -112,7 +77,7 @@ let t = {
   crvTh: R.r_i(1, 5),
   curveSpeed: curveSpeed,
   noBounds: true, //noBounds,
-  grain: palette == puP ? false : noBounds ? true : R.r_b(0.5),
+  grain: noBounds ? true : R.r_b(0.5),
   bgGrain: true, //palette == puP ? false : boxes == 1 ? true : R.r_b(0.2), // single box has to have bg grain
   omgWhat: true, //boxes == 1 ? R.r_b(0.1) : false
 };
@@ -149,7 +114,7 @@ function setup() {
 
     particles[i] = new Particle(loc, dir, speed);
   }
-  background(0);
+  background(255);
   if (!t.bleedOver) {
     fill(R.r_c(t.palette));
     let boundingBoxes = boundingBox();
@@ -158,9 +123,9 @@ function setup() {
       rect(boundX[0], boundY[0], boundX[1] - boundX[0], boundY[1] - boundY[0]);
     }
   }
-  if (t.bgGrain) {
-    p5g.granulateSimple(100 * 1.5);
-  }
+  // if (t.bgGrain) {
+  //   p5g.granulateSimple(100 * 1.5);
+  // }
 
   let boundingBoxes = boundingBox();
   for (let j = 0; j < boundingBoxes.length; j++) {
@@ -205,15 +170,8 @@ function setup() {
         if (aCol[k][j]) {
           let rcol = aCol[k][j];
 
-          // For jonooo
-          // if (rcol === '#b2bf0a') {
-          //   rcol = getRandomSimilarColor(rcol)
-          // }
-
-          // if (R.random_dec() < 0.5) {
           fill(rcol);
           stroke(rcol);
-          // }
           strokeWeight(t.crvTh * maxCanv * 0.001);
 
           for (let i = 0; i < ppr; i++) {
@@ -241,8 +199,9 @@ function setup() {
 
   // Break output into 6 squares (3 rows x 2 columns) and shuffle them
   let squares = [];
-  let rows = 6;
-  let cols = 4;
+  // Random number of rows and cols between 2 and 6
+  let rows = 6; //R.r_i(2, 6);
+  let cols = 4; // R.r_i(2, 6);
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < cols; col++) {
       squares.push(
@@ -256,34 +215,39 @@ function setup() {
     }
   }
   squares.sort(() => R.random_dec() - 0.5);
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      let index = row * cols + col;
-      image(squares[index], (col * width) / cols, (row * height) / rows);
-      // Draw a white border
-      stroke(255);
-      strokeWeight(1);
-      noFill();
-      rect(
-        (col * width) / cols,
-        (row * height) / rows,
-        width / cols,
-        height / rows
-      );
-    }
-  }
+  // for (let row = 0; row < rows; row++) {
+  //   for (let col = 0; col < cols; col++) {
+  //     let index = row * cols + col;
+  //     image(squares[index], (col * width) / cols, (row * height) / rows);
+  //     // Draw a white border
+  //     stroke(255);
+  //     strokeWeight(1);
+  //     noFill();
+  //     rect(
+  //       (col * width) / cols,
+  //       (row * height) / rows,
+  //       width / cols,
+  //       height / rows
+  //     );
+  //   }
+  // }
+
+  // Draw a white border
+  stroke(255);
+  strokeWeight(60);
+  noFill();
+  rect(0, 0, width, height);
 
   // Put 1.svg on top of the canvas
   // Center mode
+
+  // Random scale for the svg
+  let scale = 1.5; // R.r_n(1.0, 2);
+
   imageMode(CENTER);
-  blendMode(REMOVE);
-  image(
-    R.r_c([svg1, svg2, svg3]),
-    width / 2,
-    height / 2,
-    width * 2,
-    height * 2
-  );
+  // blendMode(BURN);
+  blendMode(SUBTRACT);
+  image(R.r_c([svg1]), width / 2, height / 2, width * scale, height * scale);
   // saveCanvas(cnv, `${tokenData.hash}-${Math.round(width)}`, "png");
 }
 
