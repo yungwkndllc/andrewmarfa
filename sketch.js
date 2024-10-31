@@ -215,22 +215,22 @@ function setup() {
     }
   }
   squares.sort(() => R.random_dec() - 0.5);
-  // for (let row = 0; row < rows; row++) {
-  //   for (let col = 0; col < cols; col++) {
-  //     let index = row * cols + col;
-  //     image(squares[index], (col * width) / cols, (row * height) / rows);
-  //     // Draw a white border
-  //     stroke(255);
-  //     strokeWeight(1);
-  //     noFill();
-  //     rect(
-  //       (col * width) / cols,
-  //       (row * height) / rows,
-  //       width / cols,
-  //       height / rows
-  //     );
-  //   }
-  // }
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      let index = row * cols + col;
+      image(squares[index], (col * width) / cols, (row * height) / rows);
+      // Draw a white border
+      stroke(255);
+      strokeWeight(1);
+      noFill();
+      rect(
+        (col * width) / cols,
+        (row * height) / rows,
+        width / cols,
+        height / rows
+      );
+    }
+  }
 
   // Draw a white border
   stroke(255);
@@ -247,7 +247,13 @@ function setup() {
   imageMode(CENTER);
   // blendMode(BURN);
   blendMode(SUBTRACT);
-  image(R.r_c([svg1]), width / 2, height / 2, width * scale, height * scale);
+  image(
+    R.r_c([svg1, svg2, svg3]),
+    width / 2,
+    height / 2,
+    width * scale,
+    height * scale
+  );
   // saveCanvas(cnv, `${tokenData.hash}-${Math.round(width)}`, "png");
 }
 
